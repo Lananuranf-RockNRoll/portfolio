@@ -1,4 +1,5 @@
 import React from "react";
+import taskImage from "../assets/task-management.png";
 
 interface Project {
     title: string;
@@ -12,14 +13,14 @@ interface Project {
 
 const projects: Project[] = [
     {
-        title: "Task Management App",
+        title: "Web Management Letta School",
         description:
             "Fullstack task management application with authentication, CRUD features, and secure REST API.",
-        tech: ["React", "Node.js", "PostgreSQL", "JWT"],
+        tech: ["React", "Fiber", "PostgreSQL,Neon"],
         image:
-            "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
-        demoUrl: "#",
-        githubUrl: "#",
+            taskImage,
+        demoUrl: "https://letta-school.netlify.app/",
+        githubUrl: "https://github.com/Lananuranf-RockNRoll/fe_school",
         demoLabel: "Live Demo",
     },
     {
