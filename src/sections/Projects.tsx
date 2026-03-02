@@ -39,7 +39,7 @@ const projects: Project[] = [
         title: "Dockerized Web App",
         description:
             "Containerized fullstack web application deployed using Docker and Kubernetes.",
-        tech: ["Docker", "AWS"],
+        tech: ["React", "gin/gorm", "PostgreSQL", "AWS", "Docker"],
         image:
             "https://images.unsplash.com/photo-1605745341112-85968b19335b",
         demoUrl: "https://lananuranf.my.id/",
