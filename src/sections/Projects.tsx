@@ -1,5 +1,6 @@
 import React from "react";
 import taskImage from "../assets/task-management.png";
+import LaporanImage from "../assets/laporan.png"
 
 interface Project {
     title: string;
@@ -29,20 +30,20 @@ const projects: Project[] = [
             "Data analysis and visualization project using Python and Tableau to extract business insights.",
         tech: ["Python", "Pandas", "Tableau"],
         image:
-            "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-        demoUrl: "#",
-        githubUrl: "#",
+            LaporanImage,
+        demoUrl: "https://sales-dashboard-lananuranf.streamlit.app/",
+        githubUrl: "https://github.com/Lananuranf-RockNRoll/sales-dashboard",
         demoLabel: "View Report",
     },
     {
         title: "Dockerized Web App",
         description:
             "Containerized fullstack web application deployed using Docker and Kubernetes.",
-        tech: ["Docker", "Kubernetes", "AWS"],
+        tech: ["Docker", "AWS"],
         image:
             "https://images.unsplash.com/photo-1605745341112-85968b19335b",
-        demoUrl: "#",
-        githubUrl: "#",
+        demoUrl: "https://lananuranf.my.id/",
+        githubUrl: "https://github.com/Lananuranf-RockNRoll/ecommerce-fullstack",
         demoLabel: "Live Demo",
     },
 ];
