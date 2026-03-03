@@ -41,8 +41,8 @@ const PROJECTS: Project[] = [
             { label: "CI/CD",      colorClass: "bg-green-50 text-green-700 border-green-200" },
         ],
         image: taskImage,
-        demoUrl: "https://letta-school.netlify.app/",
-        githubUrl: "https://github.com/Lananuranf-RockNRoll/fe_school",
+        demoUrl: "https://school.lananuranf.my.id/",
+        githubUrl: "https://github.com/Lananuranf-RockNRoll/letta-school",
         demoLabel: "Live Demo",
         accentFrom: "from-cyan-500",
         accentTo: "to-blue-600",
@@ -135,9 +135,8 @@ function ProjectCard({
                 glareMaxOpacity={0.12}
                 glareColor="#ffffff"
                 glarePosition="all"
-                scale={1.03}
-                transitionSpeed={600}
                 style={{ transformStyle: "preserve-3d" }}
+                tiltReverse
             >
                 <article
                     className="bg-white rounded-3xl overflow-hidden border border-slate-100 flex flex-col"
