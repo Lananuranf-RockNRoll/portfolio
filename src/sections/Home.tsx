@@ -2,6 +2,7 @@ import { type ReactElement } from "react";
 import { TypeAnimation } from "react-type-animation";
 import { motion, type Variants } from "framer-motion";
 import logo from "../assets/Profile.jpg";
+import CVDownloadButton from "./CV";
 
 /* ─── Types ──────────────────────────────────────────────── */
 interface SocialLink {
@@ -13,6 +14,7 @@ interface SocialLink {
 
 /* ─── Social Links ───────────────────────────────────────── */
 const SOCIAL_LINKS: SocialLink[] = [
+
     {
         name: "GitHub",
         url: "https://github.com/Lananuranf-RockNRoll",
@@ -192,6 +194,7 @@ export default function Home(): ReactElement {
                                 {link.name}
                             </motion.a>
                         ))}
+                        <CVDownloadButton />
                     </motion.div>
                 </motion.div>
             </div>
