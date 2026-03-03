@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://portfolio-lananuranf.netlify.app/sitemap.xml
+Sitemap: https://portfolio.lananuranf.my.id/sitemap.xml
