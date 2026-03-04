@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@iconify-json/logos": "^1.2.10",
+    "@iconify-json/simple-icons": "^1.2.72",
+    "@iconify/react": "^6.0.2",
     "@react-pdf/renderer": "^4.3.2",
     "@tailwindcss/vite": "^4.2.1",
     "framer-motion": "^12.34.5",

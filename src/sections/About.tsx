@@ -1,4 +1,4 @@
-import { useRef, type ReactElement } from "react";
+import { useRef, type ReactElement, type JSX } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
 import aboutImage from "../assets/about.png";
 
@@ -9,7 +9,7 @@ interface Stat {
 }
 
 interface Highlight {
-    icon: ReactElement;
+    icon: JSX.Element;
     title: string;
     desc: string;
     colorClass: string;
@@ -18,7 +18,7 @@ interface Highlight {
 /* ─── Data ───────────────────────────────────────────────── */
 const STATS: Stat[] = [
     { value: "6th", label: "Semester" },
-    { value: "3+", label: "Projects" },
+    { value: "3+",  label: "Projects" },
     { value: "3",   label: "Domains"  },
 ];
 
@@ -85,6 +85,56 @@ const statVariants: Variants = {
     }),
 };
 
+/* ─── StatCard ───────────────────────────────────────────── */
+interface StatCardProps extends Stat {
+    index: number;
+    inView: boolean;
+}
+
+function StatCard({ value, label, index, inView }: StatCardProps): JSX.Element {
+    return (
+        <motion.div
+            className="flex flex-col items-center bg-white rounded-2xl px-4 py-3 shadow-sm border border-slate-100 flex-1"
+            variants={statVariants}
+            initial="hidden"
+            animate={inView ? "show" : "hidden"}
+            custom={index}
+            whileHover={{ y: -4, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
+        >
+            <span className="text-xl font-extrabold text-slate-900">{value}</span>
+            <span className="text-xs text-slate-400 font-medium mt-0.5">{label}</span>
+        </motion.div>
+    );
+}
+
+/* ─── HighlightCard ──────────────────────────────────────── */
+interface HighlightCardProps extends Highlight {
+    index: number;
+    inView: boolean;
+}
+
+function HighlightCard({ icon, title, desc, colorClass, index, inView }: HighlightCardProps): JSX.Element {
+    return (
+        <motion.div
+            className="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-left cursor-default"
+            variants={cardVariants}
+            initial="hidden"
+            animate={inView ? "show" : "hidden"}
+            custom={index}
+            whileHover={{ x: 6, boxShadow: "0 4px 20px rgba(0,0,0,0.07)" }}
+            transition={{ type: "spring", stiffness: 300 }}
+        >
+            <span className={`flex-shrink-0 p-2 rounded-xl ${colorClass}`}>
+                {icon}
+            </span>
+            <div>
+                <p className="font-semibold text-slate-800 text-sm">{title}</p>
+                <p className="text-slate-500 text-xs mt-0.5">{desc}</p>
+            </div>
+        </motion.div>
+    );
+}
+
 /* ─── Component ──────────────────────────────────────────── */
 export default function About(): ReactElement {
     const ref = useRef<HTMLElement>(null);
@@ -96,8 +146,7 @@ export default function About(): ReactElement {
             ref={ref}
             className="min-h-screen flex items-center px-6 md:px-12 py-24 scroll-mt-14 overflow-hidden relative"
             style={{
-                background:
-                    "linear-gradient(160deg, #f0fdf4 0%, #dcfce7 20%, #f8fafc 50%, #fef9c3 80%, #fff7ed 100%)",
+                background: "linear-gradient(160deg, #f0fdf4 0%, #dcfce7 20%, #f8fafc 50%, #fef9c3 80%, #fff7ed 100%)",
             }}
         >
             {/* Blobs */}
@@ -130,18 +179,7 @@ export default function About(): ReactElement {
 
                     <div className="flex gap-4 w-full justify-center">
                         {STATS.map((stat, i) => (
-                            <motion.div
-                                key={stat.label}
-                                className="flex flex-col items-center bg-white rounded-2xl px-4 py-3 shadow-sm border border-slate-100 flex-1"
-                                variants={statVariants}
-                                initial="hidden"
-                                animate={inView ? "show" : "hidden"}
-                                custom={i}
-                                whileHover={{ y: -4, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
-                            >
-                                <span className="text-xl font-extrabold text-slate-900">{stat.value}</span>
-                                <span className="text-xs text-slate-400 font-medium mt-0.5">{stat.label}</span>
-                            </motion.div>
+                            <StatCard key={stat.label} {...stat} index={i} inView={inView} />
                         ))}
                     </div>
                 </motion.div>
@@ -176,24 +214,7 @@ export default function About(): ReactElement {
 
                     <div className="flex flex-col gap-3 mt-1">
                         {HIGHLIGHTS.map((item, i) => (
-                            <motion.div
-                                key={item.title}
-                                className="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-left cursor-default"
-                                variants={cardVariants}
-                                initial="hidden"
-                                animate={inView ? "show" : "hidden"}
-                                custom={i}
-                                whileHover={{ x: 6, boxShadow: "0 4px 20px rgba(0,0,0,0.07)" }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                            >
-                <span className={`flex-shrink-0 p-2 rounded-xl ${item.colorClass}`}>
-                  {item.icon}
-                </span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 text-sm">{item.title}</p>
-                                    <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
-                                </div>
-                            </motion.div>
+                            <HighlightCard key={item.title} {...item} index={i} inView={inView} />
                         ))}
                     </div>
                 </motion.div>

@@ -31,7 +31,7 @@ const PROJECTS: Project[] = [
         title: "Web Management Letta School",
         subtitle: "Fullstack Web Application",
         description:
-            "School management system with JWT authentication, role-based access control, and full CRUD features. Built with React, Go Fiber REST API, deployed via Docker on AWS EC2 with CI/CD via GitHub Actions.",
+            "School management system with JWT authentication, role-based access control, and full CRUD features. Built with React, Go Fiber REST API, deployed via Docker on AWS EC2 with CI/CD via GitHub Actions and DevSecOps pipeline including secret scanning, SAST, dependency audit, container scanning, and DAST.",
         tech: [
             { label: "React",      colorClass: "bg-cyan-50 text-cyan-700 border-cyan-200" },
             { label: "Go Fiber",   colorClass: "bg-sky-50 text-sky-700 border-sky-200" },
@@ -39,6 +39,11 @@ const PROJECTS: Project[] = [
             { label: "Docker",     colorClass: "bg-indigo-50 text-indigo-700 border-indigo-200" },
             { label: "AWS EC2",    colorClass: "bg-orange-50 text-orange-700 border-orange-200" },
             { label: "CI/CD",      colorClass: "bg-green-50 text-green-700 border-green-200" },
+            { label: "GitLeaks",   colorClass: "bg-red-50 text-red-700 border-red-200" },
+            { label: "Semgrep",    colorClass: "bg-purple-50 text-purple-700 border-purple-200" },
+            { label: "Trivy",      colorClass: "bg-blue-50 text-blue-700 border-blue-200" },
+            { label: "OWASP ZAP",  colorClass: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+            { label: "CloudTrail", colorClass: "bg-orange-50 text-orange-700 border-orange-200" },
         ],
         image: taskImage,
         demoUrl: "https://school.lananuranf.my.id/",

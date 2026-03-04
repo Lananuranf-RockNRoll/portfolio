@@ -1,20 +1,23 @@
-import { type ReactElement } from "react";
+import { type ReactElement, type JSX } from "react";
 import { TypeAnimation } from "react-type-animation";
 import { motion, type Variants } from "framer-motion";
 import logo from "../assets/Profile.jpg";
 import CVDownloadButton from "./CV";
 
-/* ─── Types ──────────────────────────────────────────────── */
 interface SocialLink {
     name: string;
     url: string;
     hoverClass: string;
-    icon: ReactElement;
+    icon: JSX.Element;
 }
 
-/* ─── Social Links ───────────────────────────────────────── */
-const SOCIAL_LINKS: SocialLink[] = [
+interface ContactInfo {
+    href: string;
+    label: string;
+    icon: JSX.Element;
+}
 
+const SOCIAL_LINKS: SocialLink[] = [
     {
         name: "GitHub",
         url: "https://github.com/Lananuranf-RockNRoll",
@@ -27,7 +30,7 @@ const SOCIAL_LINKS: SocialLink[] = [
     },
     {
         name: "LinkedIn",
-        url: "https://linkedin.com/in/USERNAME",
+        url: "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
         hoverClass: "hover:bg-blue-600 hover:text-white hover:border-blue-600",
         icon: (
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
@@ -47,7 +50,34 @@ const SOCIAL_LINKS: SocialLink[] = [
     },
 ];
 
-/* ─── Variants ───────────────────────────────────────────── */
+const CONTACT_INFO: ContactInfo[] = [
+    {
+        href: "tel:+6285960235008",
+        label: "+62 859-6023-5008",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 flex-shrink-0" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25z" />
+            </svg>
+        ),
+    },
+    {
+        href: "mailto:lananuranf@gmail.com",
+        label: "lananuranf@gmail.com",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 flex-shrink-0" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+        ),
+    },
+];
+
+const TYPE_SEQUENCE: (string | number)[] = [
+    "Web Developer 💻",           1800,
+    "Data Science Enthusiast 📊", 1800,
+    "DevSecOps Engineer 🔐",      1800,
+    "Fullstack Builder 🚀",       1800,
+];
+
 const floatVariants: Variants = {
     animate: {
         y: [0, -10, 0],
@@ -62,21 +92,43 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-/* ─── Home ───────────────────────────────────────────────── */
+function SocialButton({ name, url, hoverClass, icon }: SocialLink): JSX.Element {
+    return (
+        <motion.a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center gap-2 px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white shadow-sm transition-all duration-200 ${hoverClass}`}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.96 }}
+        >
+            {icon}
+            {name}
+        </motion.a>
+    );
+}
+
+function ContactRow({ href, label, icon }: ContactInfo): JSX.Element {
+    return (
+        <a href={href} className="flex items-center justify-center md:justify-start gap-2.5 text-sm text-slate-500 hover:text-slate-800 transition-colors">
+            {icon}
+            {label}
+        </a>
+    );
+}
+
 export default function Home(): ReactElement {
     return (
         <section
             id="home"
             className="min-h-screen flex items-center justify-center px-6 md:px-12 scroll-mt-14 overflow-hidden relative"
             style={{
-                background:
-                    "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #f8fafc 50%, #ede9fe 75%, #fdf4ff 100%)",
+                background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #f8fafc 50%, #ede9fe 75%, #fdf4ff 100%)",
             }}
         >
-            {/* Blobs */}
             <motion.div
                 className="absolute top-20 left-10 w-72 h-72 bg-sky-200 rounded-full blur-3xl opacity-50 pointer-events-none"
                 animate={{ scale: [1, 1.15, 1], x: [0, 20, 0] }}
@@ -93,10 +145,7 @@ export default function Home(): ReactElement {
                 transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             />
 
-            {/* Main content */}
             <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 pt-16 pb-10 relative z-10">
-
-                {/* Profile photo */}
                 <motion.div
                     className="relative flex-shrink-0"
                     initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
@@ -111,13 +160,12 @@ export default function Home(): ReactElement {
                             className="relative w-48 h-48 md:w-56 md:h-56 rounded-full object-cover shadow-2xl ring-4 ring-white"
                         />
                         <span className="absolute bottom-2 right-2 flex h-5 w-5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-5 w-5 rounded-full bg-emerald-400 border-2 border-white" />
-            </span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex h-5 w-5 rounded-full bg-emerald-400 border-2 border-white" />
+                        </span>
                     </motion.div>
                 </motion.div>
 
-                {/* Text */}
                 <motion.div
                     className="flex flex-col items-center md:items-start gap-4 text-center md:text-left"
                     variants={containerVariants}
@@ -135,15 +183,9 @@ export default function Home(): ReactElement {
                         <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
                             Lananuranf
                         </h1>
-                        {/* react-type-animation */}
                         <div className="mt-2 text-base font-semibold tracking-wide h-7">
                             <TypeAnimation
-                                sequence={[
-                                    "Web Developer 💻",         1800,
-                                    "Data Science Enthusiast 📊", 1800,
-                                    "DevSecOps Engineer 🔐",      1800,
-                                    "Fullstack Builder 🚀",        1800,
-                                ]}
+                                sequence={TYPE_SEQUENCE}
                                 wrapper="span"
                                 speed={55}
                                 deletionSpeed={70}
@@ -156,24 +198,9 @@ export default function Home(): ReactElement {
                     <motion.div variants={itemVariants} className="w-10 h-0.5 bg-slate-200 rounded-full" />
 
                     <motion.div variants={itemVariants} className="flex flex-col gap-2">
-                        <a
-                            href="tel:+6285960235008"
-                            className="flex items-center justify-center md:justify-start gap-2.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 flex-shrink-0" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25z" />
-                            </svg>
-                            +62 859-6023-5008
-                        </a>
-                        <a
-                            href="mailto:lananuranf@gmail.com"
-                            className="flex items-center justify-center md:justify-start gap-2.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 flex-shrink-0" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                            </svg>
-                            lananuranf@gmail.com
-                        </a>
+                        {CONTACT_INFO.map((contact) => (
+                            <ContactRow key={contact.href} {...contact} />
+                        ))}
                     </motion.div>
 
                     <motion.div
@@ -181,18 +208,7 @@ export default function Home(): ReactElement {
                         className="flex flex-row flex-wrap justify-center md:justify-start gap-3 pt-1"
                     >
                         {SOCIAL_LINKS.map((link) => (
-                            <motion.a
-                                key={link.name}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`flex items-center gap-2 px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white shadow-sm transition-all duration-200 ${link.hoverClass}`}
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                whileTap={{ scale: 0.96 }}
-                            >
-                                {link.icon}
-                                {link.name}
-                            </motion.a>
+                            <SocialButton key={link.name} {...link} />
                         ))}
                         <CVDownloadButton />
                     </motion.div>
