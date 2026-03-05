@@ -3,6 +3,7 @@ import { motion, useInView } from "framer-motion";
 import Tilt from "react-parallax-tilt";
 import taskImage from "../assets/task-management.png";
 import LaporanImage from "../assets/laporan.png";
+import AIAgentImage from "../assets/readme.png";
 
 /* ─── Types ──────────────────────────────────────────────── */
 interface TechBadge {
@@ -16,9 +17,6 @@ interface Project {
     description: string;
     tech: TechBadge[];
     image: string;
-    demoUrl: string;
-    githubUrl: string;
-    demoLabel: string;
     accentFrom: string;
     accentTo: string;
     glowColor: string;
@@ -46,9 +44,6 @@ const PROJECTS: Project[] = [
             { label: "CloudTrail", colorClass: "bg-orange-50 text-orange-700 border-orange-200" },
         ],
         image: taskImage,
-        demoUrl: "https://school.lananuranf.my.id/",
-        githubUrl: "https://github.com/Lananuranf-RockNRoll/letta-school",
-        demoLabel: "Live Demo",
         accentFrom: "from-cyan-500",
         accentTo: "to-blue-600",
         glowColor: "rgba(6,182,212,0.25)",
@@ -67,9 +62,6 @@ const PROJECTS: Project[] = [
             { label: "Random Forest", colorClass: "bg-green-50 text-green-700 border-green-200" },
         ],
         image: LaporanImage,
-        demoUrl: "https://sales-dashboard-lananuranf.streamlit.app/",
-        githubUrl: "https://github.com/Lananuranf-RockNRoll/sales-dashboard",
-        demoLabel: "View Report",
         accentFrom: "from-amber-500",
         accentTo: "to-orange-500",
         glowColor: "rgba(245,158,11,0.25)",
@@ -89,13 +81,34 @@ const PROJECTS: Project[] = [
             { label: "AWS EC2",    colorClass: "bg-orange-50 text-orange-700 border-orange-200" },
         ],
         image: "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&q=80",
-        demoUrl: "https://lananuranf.my.id/",
-        githubUrl: "https://github.com/Lananuranf-RockNRoll/ecommerce-fullstack",
-        demoLabel: "Live Demo",
         accentFrom: "from-violet-500",
         accentTo: "to-purple-600",
         glowColor: "rgba(139,92,246,0.25)",
         category: "Web Dev · Cloud",
+    },
+    {
+        title: "AI Agent — Telegram Personal Assistant",
+        subtitle: "AI · Automation · Productivity",
+        description:
+            "Personal AI assistant bot running 24/7 on Telegram. Features include auto PPT generation, ML dataset analysis (Random Forest + Logistic Regression), voice transcription (Whisper V3), image analysis (LLaMA Vision), web scraping, Google Calendar integration, habit learning, ArXiv journal search, Python executor, YouTube downloader, and Pomodoro timer. Deployed on Railway with auto-deploy via GitHub.",
+        tech: [
+            { label: "Python",           colorClass: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+            { label: "Groq LLaMA 3.3",   colorClass: "bg-orange-50 text-orange-700 border-orange-200" },
+            { label: "Telegram Bot API", colorClass: "bg-sky-50 text-sky-700 border-sky-200" },
+            { label: "Google Calendar",  colorClass: "bg-blue-50 text-blue-700 border-blue-200" },
+            { label: "scikit-learn",     colorClass: "bg-green-50 text-green-700 border-green-200" },
+            { label: "Whisper V3",       colorClass: "bg-purple-50 text-purple-700 border-purple-200" },
+            { label: "LLaMA Vision",     colorClass: "bg-pink-50 text-pink-700 border-pink-200" },
+            { label: "python-pptx",      colorClass: "bg-red-50 text-red-700 border-red-200" },
+            { label: "BeautifulSoup4",   colorClass: "bg-teal-50 text-teal-700 border-teal-200" },
+            { label: "Railway",          colorClass: "bg-violet-50 text-violet-700 border-violet-200" },
+            { label: "FFmpeg",           colorClass: "bg-slate-50 text-slate-700 border-slate-200" },
+        ],
+        image: AIAgentImage,
+        accentFrom: "from-emerald-500",
+        accentTo: "to-teal-600",
+        glowColor: "rgba(16,185,129,0.25)",
+        category: "AI · Bot · Automation",
     },
 ];
 
@@ -116,17 +129,22 @@ function ExternalIcon(): ReactElement {
     );
 }
 
-/* ─── ProjectCard with react-parallax-tilt ───────────────── */
+/* ─── ProjectCard ─────────────────────────────────────────── */
 interface ProjectCardProps extends Project {
     index: number;
     inView: boolean;
+    hideActions?: boolean;
+    demoUrl?: string;
+    githubUrl?: string;
+    demoLabel?: string;
 }
 
 function ProjectCard({
-                         title, subtitle, description, tech, image,
-                         demoUrl, githubUrl, demoLabel, accentFrom, accentTo,
-                         glowColor, category, index, inView,
-                     }: ProjectCardProps): ReactElement {
+    title, subtitle, description, tech, image,
+    accentFrom, accentTo, glowColor, category,
+    index, inView, hideActions,
+    demoUrl, githubUrl, demoLabel,
+}: ProjectCardProps): ReactElement {
     return (
         <motion.div
             initial={{ opacity: 0, y: 60 }}
@@ -145,9 +163,7 @@ function ProjectCard({
             >
                 <article
                     className="bg-white rounded-3xl overflow-hidden border border-slate-100 flex flex-col"
-                    style={{
-                        boxShadow: `0 4px 24px ${glowColor}, 0 1px 4px rgba(0,0,0,0.06)`,
-                    }}
+                    style={{ boxShadow: `0 4px 24px ${glowColor}, 0 1px 4px rgba(0,0,0,0.06)` }}
                 >
                     {/* Image */}
                     <div className="relative overflow-hidden h-48 sm:h-52">
@@ -156,17 +172,13 @@ function ProjectCard({
                             alt={title}
                             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                         />
-                        {/* gradient overlay */}
                         <div className={`absolute inset-0 bg-gradient-to-br ${accentFrom} ${accentTo} opacity-0 hover:opacity-15 transition-opacity duration-500`} />
-
                         <span className="absolute top-3 left-3 text-xs font-semibold bg-white/90 backdrop-blur-sm text-slate-600 px-3 py-1 rounded-full border border-white/50 shadow-sm">
-              {category}
-            </span>
-                        <span
-                            className={`absolute top-3 right-3 text-xs font-bold bg-gradient-to-br ${accentFrom} ${accentTo} text-white w-7 h-7 rounded-full flex items-center justify-center shadow`}
-                        >
-              {String(index + 1).padStart(2, "0")}
-            </span>
+                            {category}
+                        </span>
+                        <span className={`absolute top-3 right-3 text-xs font-bold bg-gradient-to-br ${accentFrom} ${accentTo} text-white w-7 h-7 rounded-full flex items-center justify-center shadow`}>
+                            {String(index + 1).padStart(2, "0")}
+                        </span>
                     </div>
 
                     {/* Content */}
@@ -192,32 +204,39 @@ function ProjectCard({
                             ))}
                         </div>
 
-                        <div className="h-px bg-slate-100 mt-1" />
-
-                        <div className="flex gap-3 pt-1">
-                            <motion.a
-                                href={demoUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${accentFrom} ${accentTo} shadow-sm`}
-                                whileHover={{ scale: 1.04, opacity: 0.92 }}
-                                whileTap={{ scale: 0.97 }}
-                            >
-                                <ExternalIcon />
-                                {demoLabel}
-                            </motion.a>
-                            <motion.a
-                                href={githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors"
-                                whileHover={{ scale: 1.04 }}
-                                whileTap={{ scale: 0.97 }}
-                            >
-                                <GitHubIcon />
-                                Code
-                            </motion.a>
-                        </div>
+                        {!hideActions && (demoUrl || githubUrl) && (
+                            <>
+                                <div className="h-px bg-slate-100 mt-1" />
+                                <div className="flex gap-3 pt-1">
+                                    {demoUrl && (
+                                        <motion.a
+                                            href={demoUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${accentFrom} ${accentTo} shadow-sm`}
+                                            whileHover={{ scale: 1.04, opacity: 0.92 }}
+                                            whileTap={{ scale: 0.97 }}
+                                        >
+                                            <ExternalIcon />
+                                            {demoLabel ?? "Live Demo"}
+                                        </motion.a>
+                                    )}
+                                    {githubUrl && (
+                                        <motion.a
+                                            href={githubUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors"
+                                            whileHover={{ scale: 1.04 }}
+                                            whileTap={{ scale: 0.97 }}
+                                        >
+                                            <GitHubIcon />
+                                            Code
+                                        </motion.a>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </article>
             </Tilt>
@@ -259,9 +278,31 @@ export default function Projects(): ReactElement {
 
                 {/* Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {PROJECTS.map((project, i) => (
-                        <ProjectCard key={project.title} {...project} index={i} inView={inView} />
-                    ))}
+                    {/* 3 project lama — dengan tombol demo & github */}
+                    <ProjectCard
+                        {...PROJECTS[0]} index={0} inView={inView}
+                        demoUrl="https://school.lananuranf.my.id/"
+                        githubUrl="https://github.com/Lananuranf-RockNRoll/letta-school"
+                        demoLabel="Live Demo"
+                    />
+                    <ProjectCard
+                        {...PROJECTS[1]} index={1} inView={inView}
+                        demoUrl="https://sales-dashboard-lananuranf.streamlit.app/"
+                        githubUrl="https://github.com/Lananuranf-RockNRoll/sales-dashboard"
+                        demoLabel="View Report"
+                    />
+                    <ProjectCard
+                        {...PROJECTS[2]} index={2} inView={inView}
+                        demoUrl="https://lananuranf.my.id/"
+                        githubUrl="https://github.com/Lananuranf-RockNRoll/ecommerce-fullstack"
+                        demoLabel="Live Demo"
+                    />
+
+                    {/* AI Agent — tanpa tombol demo & github */}
+                    <ProjectCard
+                        {...PROJECTS[3]} index={3} inView={inView}
+                        hideActions
+                    />
                 </div>
             </div>
         </section>
