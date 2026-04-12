@@ -1,10 +1,23 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { hydrateRoot, createRoot } from "react-dom/client";
 import App from "./App";
-import "./index.css"; // WAJIB ADA
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
-);
+const rootElement = document.getElementById("root")!;
+
+if (rootElement.hasChildNodes()) {
+    // Hydrate pre-rendered HTML dari react-snap
+    hydrateRoot(
+        rootElement,
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+    );
+} else {
+    // Render biasa (dev mode)
+    createRoot(rootElement).render(
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+    );
+}

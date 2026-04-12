@@ -8,4 +8,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   base: '/',
+  build: {
+    target: 'es2019',
+  },
 })
