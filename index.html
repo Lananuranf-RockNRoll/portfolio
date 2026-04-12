@@ -65,7 +65,48 @@
   </script>
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <!-- SEO Fallback Content - diganti React setelah JS load -->
+  <main style="font-family:sans-serif;max-width:900px;margin:0 auto;padding:2rem;">
+    <section id="home">
+      <h1>Lananuranf — Fullstack Web Developer · Data Science · DevSecOps</h1>
+      <p>Information Systems student at Gunadarma University. Available for work.</p>
+      <p>Contact: <a href="mailto:lananuranf@gmail.com">lananuranf@gmail.com</a> · <a href="tel:+6285960235008">+62 859-6023-5008</a></p>
+      <p>
+        <a href="https://github.com/Lananuranf-RockNRoll">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/">LinkedIn</a> ·
+        <a href="https://www.instagram.com/lananur.anf/">Instagram</a>
+      </p>
+    </section>
+    <section id="about">
+      <h2>About Me</h2>
+      <p>I'm a 6th-semester Information Systems student at Gunadarma University, passionate about building secure, scalable, and data-driven applications. Currently sharpening skills across Web Development, Data Science, and DevSecOps.</p>
+    </section>
+    <section id="skills">
+      <h2>Skills</h2>
+      <p>React, TypeScript, Tailwind CSS, Node.js, Go, Python, Kubernetes, Docker, Git, GitHub, MySQL, PostgreSQL, MongoDB, Pandas, Scikit-learn, Tableau, AWS, GitLeaks, Trivy, OWASP ZAP, WEKA</p>
+    </section>
+    <section id="projects">
+      <h2>Projects</h2>
+      <article>
+        <h3>Web Management Letta School</h3>
+        <p>Fullstack school management system with JWT auth, role-based access, Docker on AWS EC2, CI/CD via GitHub Actions, and full DevSecOps pipeline (GitLeaks, Semgrep, Trivy, OWASP ZAP, CloudTrail). Built with React, Go Fiber, PostgreSQL.</p>
+      </article>
+      <article>
+        <h3>Sales Data Dashboard</h3>
+        <p>End-to-end data science project with ML predictions using Random Forest. Interactive dashboard with Streamlit, Pandas, and Matplotlib.</p>
+      </article>
+      <article>
+        <h3>Dockerized E-Commerce App</h3>
+        <p>Production-grade containerized e-commerce platform with Go Gin/GORM, React, PostgreSQL, Docker Compose, deployed on AWS EC2.</p>
+      </article>
+      <article>
+        <h3>AI Agent — Telegram Personal Assistant</h3>
+        <p>Personal AI assistant bot on Telegram with PPT generation, ML analysis, voice transcription (Whisper V3), image analysis (LLaMA Vision), Google Calendar integration, and more. Deployed on Railway.</p>
+      </article>
+    </section>
+  </main>
+</div>
 <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
