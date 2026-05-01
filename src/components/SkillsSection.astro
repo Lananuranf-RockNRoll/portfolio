@@ -1,0 +1,80 @@
+---
+// src/components/SkillsSection.astro — Pure HTML statis
+const SKILLS = [
+  { name:"React",         icon:"⚛️",  cat:"Frontend"  },
+  { name:"TypeScript",    icon:"🔷",  cat:"Frontend"  },
+  { name:"Tailwind CSS",  icon:"🎨",  cat:"Frontend"  },
+  { name:"Vite",          icon:"⚡",  cat:"Frontend"  },
+  { name:"SvelteKit",     icon:"🧡",  cat:"Frontend"  },
+  { name:"Go Fiber",      icon:"🐹",  cat:"Backend"   },
+  { name:"Go Gin",        icon:"🐹",  cat:"Backend"   },
+  { name:"GORM",          icon:"🗄️", cat:"Backend"   },
+  { name:"Node.js",       icon:"🟢",  cat:"Backend"   },
+  { name:"PostgreSQL",    icon:"🐘",  cat:"Database"  },
+  { name:"MySQL",         icon:"🐬",  cat:"Database"  },
+  { name:"MongoDB",       icon:"🍃",  cat:"Database"  },
+  { name:"Docker",        icon:"🐳",  cat:"DevOps"    },
+  { name:"AWS EC2",       icon:"☁️",  cat:"DevOps"    },
+  { name:"GitHub Actions",icon:"⚙️",  cat:"DevOps"    },
+  { name:"Kubernetes",    icon:"⎈",   cat:"DevOps"    },
+  { name:"Nginx",         icon:"🌐",  cat:"DevOps"    },
+  { name:"GitLeaks",      icon:"🔍",  cat:"Security"  },
+  { name:"Semgrep",       icon:"🛡️", cat:"Security"  },
+  { name:"Trivy",         icon:"🔬",  cat:"Security"  },
+  { name:"OWASP ZAP",     icon:"⚠️",  cat:"Security"  },
+  { name:"Python",        icon:"🐍",  cat:"Data"      },
+  { name:"Pandas",        icon:"🐼",  cat:"Data"      },
+  { name:"Scikit-learn",  icon:"🤖",  cat:"Data"      },
+  { name:"Streamlit",     icon:"📊",  cat:"Data"      },
+  { name:"Matplotlib",    icon:"📈",  cat:"Data"      },
+  { name:"Tableau",       icon:"📉",  cat:"Data"      },
+];
+
+const catColor: Record<string, string> = {
+  Frontend: "bg-cyan-50 border-cyan-200 hover:border-cyan-400",
+  Backend:  "bg-sky-50 border-sky-200 hover:border-sky-400",
+  Database: "bg-blue-50 border-blue-200 hover:border-blue-400",
+  DevOps:   "bg-indigo-50 border-indigo-200 hover:border-indigo-400",
+  Security: "bg-red-50 border-red-200 hover:border-red-400",
+  Data:     "bg-amber-50 border-amber-200 hover:border-amber-400",
+};
+---
+
+<section
+  id="skills"
+  class="min-h-screen flex items-center justify-center px-6 py-24"
+  style="background: linear-gradient(145deg,#faf5ff 0%,#ede9fe 25%,#f0f9ff 60%,#e0f2fe 100%);"
+  aria-labelledby="skills-heading"
+>
+  <div class="max-w-5xl w-full text-center">
+
+    <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">What I use</p>
+    <h2 id="skills-heading" class="text-4xl font-extrabold mb-3 text-slate-900">Skills &amp; Technologies</h2>
+    <p class="text-slate-500 mb-4 text-sm max-w-xl mx-auto">
+      Stack teknologi yang saya gunakan untuk membangun aplikasi production-grade —
+      dari frontend hingga infrastructure dan machine learning.
+    </p>
+
+    <!-- Category legend -->
+    <div class="flex flex-wrap justify-center gap-2 mb-10">
+      {Object.entries(catColor).map(([cat, cls]) => (
+        <span class={`text-xs font-semibold px-3 py-1 rounded-full border ${cls} text-slate-600`}>
+          {cat}
+        </span>
+      ))}
+    </div>
+
+    <!-- Grid -->
+    <ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 list-none p-0 m-0">
+      {SKILLS.map(skill => (
+        <li>
+          <div class={`rounded-2xl border p-4 flex flex-col items-center justify-center gap-2 cursor-default transition-all duration-200 hover:-translate-y-2 hover:shadow-lg ${catColor[skill.cat]}`}>
+            <span class="text-3xl" role="img" aria-label={skill.name}>{skill.icon}</span>
+            <p class="text-xs font-semibold text-slate-600 text-center leading-tight">{skill.name}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+  </div>
+</section>

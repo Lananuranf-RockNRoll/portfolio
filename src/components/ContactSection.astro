@@ -1,0 +1,74 @@
+---
+// src/components/ContactSection.astro
+---
+
+<section
+  id="contact"
+  class="px-6 py-24"
+  style="background: linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 30%,#f8fafc 70%,#f5f3ff 100%);"
+  aria-labelledby="contact-heading"
+>
+  <div class="max-w-4xl mx-auto text-center">
+
+    <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Get in touch</p>
+    <h2 id="contact-heading" class="text-4xl font-extrabold text-slate-900 mb-3">Contact</h2>
+    <p class="text-slate-500 text-sm mb-10 max-w-lg mx-auto">
+      Tertarik berkolaborasi, menawarkan kesempatan magang, freelance, atau sekadar berdiskusi soal tech?
+      Saya selalu terbuka — response time biasanya dalam 24 jam.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
+      {[
+        {
+          href: "mailto:lananuranf@gmail.com",
+          label: "lananuranf@gmail.com",
+          sub: "Email",
+          emoji: "📧",
+          color: "hover:border-sky-400 hover:bg-sky-50",
+        },
+        {
+          href: "tel:+6285960235008",
+          label: "+62 859-6023-5008",
+          sub: "WhatsApp / Phone",
+          emoji: "📱",
+          color: "hover:border-green-400 hover:bg-green-50",
+        },
+        {
+          href: "https://github.com/Lananuranf-RockNRoll",
+          label: "Lananuranf-RockNRoll",
+          sub: "GitHub",
+          emoji: "💻",
+          color: "hover:border-gray-400 hover:bg-gray-50",
+          external: true,
+        },
+        {
+          href: "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
+          label: "maulana-nur-anfajm",
+          sub: "LinkedIn",
+          emoji: "💼",
+          color: "hover:border-blue-400 hover:bg-blue-50",
+          external: true,
+        },
+      ].map(c => (
+        <a
+          href={c.href}
+          target={c.external ? "_blank" : undefined}
+          rel={c.external ? "noopener noreferrer" : undefined}
+          class={`flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-left transition-all duration-200 ${c.color}`}
+        >
+          <span class="text-2xl">{c.emoji}</span>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">{c.sub}</p>
+            <p class="text-sm font-semibold text-slate-800 mt-0.5">{c.label}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-5 py-2.5 text-emerald-700 text-sm font-semibold">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+      Open to internship, freelance &amp; full-time opportunities
+    </div>
+
+  </div>
+</section>

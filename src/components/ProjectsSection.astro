@@ -1,0 +1,214 @@
+---
+// src/components/ProjectsSection.astro — Studi kasus detail, SEO-rich content
+
+const PROJECTS = [
+  {
+    id: "letta-school",
+    num: "01",
+    title: "Web Management Letta School",
+    subtitle: "Fullstack Web Application · DevSecOps",
+    category: "Web Dev · DevOps",
+    demoUrl: "https://school.lananuranf.my.id/",
+    githubUrl: "https://github.com/Lananuranf-RockNRoll/letta-school",
+    demoLabel: "Live Demo",
+    accent: "from-cyan-500 to-blue-600",
+    border: "border-cyan-200",
+    techBadges: [
+      { label:"React",      color:"bg-cyan-50 text-cyan-700 border-cyan-200" },
+      { label:"Go Fiber",   color:"bg-sky-50 text-sky-700 border-sky-200" },
+      { label:"PostgreSQL", color:"bg-blue-50 text-blue-700 border-blue-200" },
+      { label:"Docker",     color:"bg-indigo-50 text-indigo-700 border-indigo-200" },
+      { label:"AWS EC2",    color:"bg-orange-50 text-orange-700 border-orange-200" },
+      { label:"GitHub Actions", color:"bg-green-50 text-green-700 border-green-200" },
+      { label:"GitLeaks",   color:"bg-red-50 text-red-700 border-red-200" },
+      { label:"Semgrep",    color:"bg-purple-50 text-purple-700 border-purple-200" },
+      { label:"Trivy",      color:"bg-blue-50 text-blue-700 border-blue-200" },
+      { label:"OWASP ZAP",  color:"bg-yellow-50 text-yellow-700 border-yellow-200" },
+    ],
+    summary: "Sistem manajemen sekolah fullstack dengan JWT auth, role-based access control, dan full DevSecOps pipeline (GitLeaks, Semgrep, Trivy, OWASP ZAP, CloudTrail). Deployed di AWS EC2 via Docker dan GitHub Actions CI/CD.",
+    problem: "Sekolah Letta membutuhkan platform digital terpadu untuk mengelola data siswa, guru, absensi, dan laporan akademik — sebelumnya masih manual dengan spreadsheet yang rawan error dan tidak aman.",
+    solution: "Membangun school management system berbasis web dengan Go Fiber backend (performa tinggi, <1ms latency), React frontend yang responsif, PostgreSQL sebagai database, dan sistem RBAC tiga level: admin, guru, dan siswa.",
+    devsecops: "Setiap push ke main otomatis menjalankan 6 tahap security: GitLeaks (secret scanning) → Semgrep (SAST) → npm/go audit (dependency check) → Trivy (container scanning) → OWASP ZAP (DAST) → CloudTrail (audit log).",
+  },
+  {
+    id: "sales-dashboard",
+    num: "02",
+    title: "Sales Data Dashboard",
+    subtitle: "Data Science · Machine Learning Analytics",
+    category: "Data Science · ML",
+    demoUrl: "https://sales-dashboard-lananuranf.streamlit.app/",
+    githubUrl: "https://github.com/Lananuranf-RockNRoll/sales-dashboard",
+    demoLabel: "View App",
+    accent: "from-amber-500 to-orange-500",
+    border: "border-amber-200",
+    techBadges: [
+      { label:"Python",        color:"bg-yellow-50 text-yellow-700 border-yellow-200" },
+      { label:"Streamlit",     color:"bg-red-50 text-red-700 border-red-200" },
+      { label:"Pandas",        color:"bg-blue-50 text-blue-700 border-blue-200" },
+      { label:"Scikit-learn",  color:"bg-green-50 text-green-700 border-green-200" },
+      { label:"Random Forest", color:"bg-emerald-50 text-emerald-700 border-emerald-200" },
+      { label:"Matplotlib",    color:"bg-purple-50 text-purple-700 border-purple-200" },
+    ],
+    summary: "Dashboard data science end-to-end dengan ML predictions menggunakan Random Forest. Analisis performa penjualan historis dan prediksi periode berikutnya, dibangun dengan Python, Streamlit, Pandas, dan Matplotlib.",
+    problem: "Tim bisnis tidak memiliki visibilitas real-time terhadap performa penjualan dan tidak bisa memprediksi tren ke depan — keputusan dibuat berdasarkan intuisi, bukan data.",
+    solution: "Pipeline end-to-end: data cleaning (missing value imputation, outlier detection dengan IQR), feature engineering (day-of-week, quarter, lag features), Random Forest model dengan 5-fold cross-validation, dan dashboard interaktif Streamlit yang bisa digunakan non-technical user.",
+    devsecops: "Model dilatih dengan RandomizedSearchCV untuk hyperparameter tuning. Semua langkah pipeline didokumentasikan dan reproducible via requirements.txt dan seed yang konsisten.",
+  },
+  {
+    id: "ecommerce",
+    num: "03",
+    title: "Dockerized E-Commerce App",
+    subtitle: "Cloud-Native Fullstack Platform",
+    category: "Web Dev · Cloud",
+    demoUrl: undefined,
+    githubUrl: "https://github.com/Lananuranf-RockNRoll/ecommerce-fullstack",
+    demoLabel: undefined,
+    accent: "from-violet-500 to-purple-600",
+    border: "border-violet-200",
+    techBadges: [
+      { label:"React",      color:"bg-cyan-50 text-cyan-700 border-cyan-200" },
+      { label:"Go Gin",     color:"bg-sky-50 text-sky-700 border-sky-200" },
+      { label:"GORM",       color:"bg-slate-50 text-slate-700 border-slate-200" },
+      { label:"PostgreSQL", color:"bg-blue-50 text-blue-700 border-blue-200" },
+      { label:"Docker",     color:"bg-indigo-50 text-indigo-700 border-indigo-200" },
+      { label:"Nginx",      color:"bg-green-50 text-green-700 border-green-200" },
+      { label:"AWS EC2",    color:"bg-orange-50 text-orange-700 border-orange-200" },
+    ],
+    summary: "Platform e-commerce cloud-native production-grade dengan Go Gin/GORM backend, React frontend, PostgreSQL, Docker Compose orchestration di AWS EC2 dengan Nginx reverse proxy dan SSL.",
+    problem: "Membutuhkan platform e-commerce yang repeatable, scalable, dan mudah di-maintain — dengan deployment yang konsisten antara environment development dan production.",
+    solution: "Clean architecture berlapis: handler layer (HTTP), service layer (business logic murni, testable), repository layer (database abstraction). Seluruh infrastruktur didefinisikan dalam docker-compose.yml — zero manual setup di server.",
+    devsecops: "Environment variables via .env (tidak di-commit), Nginx sebagai reverse proxy dengan SSL termination, persistent volume untuk PostgreSQL data, dan health check untuk setiap container.",
+  },
+  {
+    id: "ai-telegram-bot",
+    num: "04",
+    title: "AI Agent — Telegram Personal Assistant",
+    subtitle: "AI · Automation · Productivity Bot",
+    category: "AI · Bot · Automation",
+    demoUrl: undefined,
+    githubUrl: undefined,
+    demoLabel: undefined,
+    accent: "from-emerald-500 to-teal-600",
+    border: "border-emerald-200",
+    techBadges: [
+      { label:"Python",          color:"bg-yellow-50 text-yellow-700 border-yellow-200" },
+      { label:"Groq LLaMA 3.3",  color:"bg-orange-50 text-orange-700 border-orange-200" },
+      { label:"Telegram Bot API",color:"bg-sky-50 text-sky-700 border-sky-200" },
+      { label:"Whisper V3",      color:"bg-purple-50 text-purple-700 border-purple-200" },
+      { label:"LLaMA Vision",    color:"bg-pink-50 text-pink-700 border-pink-200" },
+      { label:"scikit-learn",    color:"bg-green-50 text-green-700 border-green-200" },
+      { label:"Google Calendar", color:"bg-blue-50 text-blue-700 border-blue-200" },
+      { label:"Railway",         color:"bg-violet-50 text-violet-700 border-violet-200" },
+    ],
+    summary: "Personal AI assistant 24/7 di Telegram. Fitur: auto-PPT generation, ML dataset analysis, voice transcription (Whisper V3), image analysis (LLaMA Vision), web scraping, Google Calendar integration, ArXiv search, Python executor, YouTube downloader, Pomodoro timer. Deployed di Railway.",
+    problem: "Kebutuhan personal assistant yang bisa diakses kapanpun via smartphone, menjalankan task produktivitas, dan membantu analisis data tanpa perlu buka laptop.",
+    solution: "AI agent berbasis Telegram menggunakan Groq LLaMA 3.3 sebagai backbone (inferensi sangat cepat vs OpenAI). Multimodal: bisa proses teks, voice (Whisper V3 transcription), dan gambar (LLaMA Vision). Integrasi dua arah dengan Google Calendar untuk manajemen jadwal.",
+    devsecops: "Auto-deploy ke Railway setiap push ke main. Secret management via Railway environment variables. FFmpeg untuk audio processing, BeautifulSoup4 untuk web scraping yang aman.",
+  },
+];
+---
+
+<section
+  id="projects"
+  class="px-6 py-24"
+  style="background: linear-gradient(150deg,#fff1f2 0%,#ffe4e6 15%,#f8fafc 45%,#eff6ff 75%,#dbeafe 100%);"
+  aria-labelledby="projects-heading"
+>
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-14">
+      <p class="text-sm font-semibold tracking-widest text-slate-400 uppercase mb-2">What I've built</p>
+      <h2 id="projects-heading" class="text-4xl font-extrabold text-slate-900">Projects</h2>
+      <p class="text-slate-500 mt-2 text-sm max-w-xl mx-auto">
+        Aplikasi production-grade yang benar-benar live — bukan sekadar demo atau tugas kuliah.
+        Setiap proyek punya studi kasus lengkap: problem, solution, dan tech stack.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-12">
+      {PROJECTS.map((p, idx) => (
+        <article
+          class={`bg-white rounded-3xl border ${p.border} shadow-sm overflow-hidden`}
+          aria-labelledby={`project-title-${p.id}`}
+        >
+          <div class="flex flex-col lg:flex-row">
+
+            <!-- Left: number + title + tech -->
+            <div class="lg:w-2/5 p-6 md:p-8 flex flex-col gap-4">
+              <div class="flex items-start gap-3">
+                <span class={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br ${p.accent} leading-none`}>
+                  {p.num}
+                </span>
+                <div>
+                  <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{p.category}</p>
+                  <h3 id={`project-title-${p.id}`} class="text-xl font-bold text-slate-900 leading-snug mt-0.5">
+                    {p.title}
+                  </h3>
+                  <p class="text-sm text-slate-500 mt-0.5">{p.subtitle}</p>
+                </div>
+              </div>
+
+              <p class="text-slate-600 text-sm leading-relaxed">{p.summary}</p>
+
+              <!-- Tech badges -->
+              <div class="flex flex-wrap gap-1.5">
+                {p.techBadges.map(t => (
+                  <span class={`text-xs font-medium px-2.5 py-1 rounded-full border ${t.color}`}>{t.label}</span>
+                ))}
+              </div>
+
+              <!-- Action buttons -->
+              {(p.demoUrl || p.githubUrl) && (
+                <div class="flex gap-3 pt-1">
+                  {p.demoUrl && (
+                    <a href={p.demoUrl} target="_blank" rel="noopener noreferrer"
+                      class={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${p.accent} shadow-sm hover:opacity-90 transition-opacity`}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                      {p.demoLabel}
+                    </a>
+                  )}
+                  {p.githubUrl && (
+                    <a href={p.githubUrl} target="_blank" rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors">
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                      Source Code
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <!-- Right: case study detail -->
+            <div class="lg:w-3/5 p-6 md:p-8 bg-slate-50/50 border-t lg:border-t-0 lg:border-l border-slate-100 flex flex-col gap-4">
+              <p class="text-xs font-bold tracking-widest text-slate-400 uppercase">Case Study</p>
+
+              <div>
+                <p class="text-xs font-semibold text-rose-600 uppercase tracking-wide mb-1">🔴 Problem</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{p.problem}</p>
+              </div>
+
+              <div>
+                <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">🟢 Solution</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{p.solution}</p>
+              </div>
+
+              <div>
+                <p class="text-xs font-semibold text-violet-600 uppercase tracking-wide mb-1">🔵 Tech Highlights</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{p.devsecops}</p>
+              </div>
+            </div>
+
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-12">
+      <a href="/blog/" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-700 transition-colors text-sm">
+        Baca artikel teknis saya →
+      </a>
+    </div>
+
+  </div>
+</section>

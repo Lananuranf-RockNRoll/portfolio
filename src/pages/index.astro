@@ -1,0 +1,30 @@
+---
+// src/pages/index.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MainLayout from '../layouts/MainLayout.astro';
+import HeroIsland from '../components/HeroIsland.tsx';
+import AboutSection from '../components/AboutSection.astro';
+import SkillsSection from '../components/SkillsSection.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+import BlogTeaser from '../components/BlogTeaser.astro';
+import ContactSection from '../components/ContactSection.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer · DevSecOps · Data Science"
+  description="Portfolio Maulana Nur Anfajm alias Lananuranf, mahasiswa Sistem Informasi Universitas Gunadarma semester 6. Fullstack developer React + Go Fiber + PostgreSQL + Docker + AWS EC2. Open for internship & freelance."
+  canonicalURL="https://portfolio.lananuranf.my.id/"
+>
+  <MainLayout />
+  <main id="main-content">
+    <!-- client:load = hydrate React segera, tapi HTML sudah ada di SSR output -->
+    <HeroIsland client:load />
+    <AboutSection />
+    <SkillsSection />
+    <ProjectsSection />
+    <BlogTeaser />
+    <ContactSection />
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,75 @@
+---
+// src/components/Footer.astro
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-slate-900 text-slate-400 px-6 py-14" aria-label="Footer">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="flex flex-col md:flex-row justify-between gap-10 mb-12">
+
+      <!-- Brand -->
+      <div class="max-w-xs">
+        <a href="/" class="text-2xl font-black text-white tracking-tight hover:opacity-80 transition-opacity">
+          Lananuranf
+        </a>
+        <p class="text-sm mt-2 leading-relaxed">
+          Maulana Nur Anfajm — Fullstack Web Developer, DevSecOps Engineer &amp; Data Scientist.
+          Mahasiswa Sistem Informasi Universitas Gunadarma, Jakarta.
+        </p>
+        <p class="text-xs mt-3 text-slate-500">
+          Open for internship, freelance &amp; full-time — <a href="mailto:lananuranf@gmail.com" class="text-sky-400 hover:text-sky-300 transition-colors">lananuranf@gmail.com</a>
+        </p>
+      </div>
+
+      <!-- Nav links -->
+      <nav aria-label="Footer navigasi" class="flex flex-col gap-2">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Navigate</p>
+        {[
+          { label:"Home",      href:"/#home"     },
+          { label:"About",     href:"/#about"    },
+          { label:"Skills",    href:"/#skills"   },
+          { label:"Projects",  href:"/#projects" },
+          { label:"Blog",      href:"/blog/"     },
+          { label:"Contact",   href:"/#contact"  },
+        ].map(l => (
+          <a href={l.href} class="text-sm hover:text-white transition-colors">{l.label}</a>
+        ))}
+      </nav>
+
+      <!-- Blog links -->
+      <nav aria-label="Blog links" class="flex flex-col gap-2">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Artikel</p>
+        <a href="/blog/cara-deploy-react-go-docker-aws/" class="text-sm hover:text-white transition-colors leading-snug max-w-[220px]">
+          Deploy React + Go Fiber ke AWS EC2
+        </a>
+        <a href="/blog/devsecops-pipeline-github-actions/" class="text-sm text-slate-600 cursor-not-allowed leading-snug max-w-[220px]">
+          DevSecOps Pipeline GitHub Actions <span class="text-xs">(soon)</span>
+        </a>
+      </nav>
+
+      <!-- Social -->
+      <div class="flex flex-col gap-3">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Connect</p>
+        {[
+          { label:"GitHub",    href:"https://github.com/Lananuranf-RockNRoll" },
+          { label:"LinkedIn",  href:"https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/" },
+          { label:"Instagram", href:"https://www.instagram.com/lananur.anf/" },
+          { label:"Email",     href:"mailto:lananuranf@gmail.com" },
+          { label:"WhatsApp",  href:"tel:+6285960235008" },
+        ].map(s => (
+          <a href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
+            class="text-sm hover:text-white transition-colors">{s.label}</a>
+        ))}
+      </div>
+    </div>
+
+    <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+      <p>© {year} Maulana Nur Anfajm (Lananuranf). All rights reserved.</p>
+      <p class="text-slate-600">
+        Built with <span class="text-slate-400">Astro · React · Tailwind CSS · Go Fiber</span>
+      </p>
+    </div>
+
+  </div>
+</footer>

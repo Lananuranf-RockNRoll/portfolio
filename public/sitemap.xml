@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-    <url>
-        <loc>https://portfolio.lananuranf.my.id/</loc>
-        <lastmod>2026-04-12</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>1.0</priority>
-    </url>
+  <!-- Halaman Utama -->
+  <url>
+    <loc>https://portfolio.lananuranf.my.id/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Blog Index -->
+  <url>
+    <loc>https://portfolio.lananuranf.my.id/blog/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Artikel Blog -->
+  <url>
+    <loc>https://portfolio.lananuranf.my.id/blog/cara-deploy-react-go-docker-aws/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <news:news>
+      <news:publication>
+        <news:name>Blog Lananuranf</news:name>
+        <news:language>id</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-28</news:publication_date>
+      <news:title>Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker dan GitHub Actions CI/CD</news:title>
+    </news:news>
+  </url>
 
 </urlset>

@@ -1,0 +1,95 @@
+---
+// src/layouts/BaseLayout.astro
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalURL?: string;
+  ogImage?: string;
+  extraSchema?: string;
+}
+
+const {
+  title = "Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer · DevSecOps · Data Science",
+  description = "Portfolio Maulana Nur Anfajm alias Lananuranf, mahasiswa Sistem Informasi Universitas Gunadarma semester 6. Fullstack developer React + Go Fiber + PostgreSQL + Docker + AWS EC2. Open for internship & freelance.",
+  canonicalURL = Astro.url.href,
+  ogImage = "/og-image.png",
+  extraSchema = "",
+} = Astro.props;
+
+const ogImageFull = new URL(ogImage, Astro.site).href;
+
+const schemaPerson = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Maulana Nur Anfajm",
+  "alternateName": ["Lananuranf", "lananur.anf"],
+  "url": "https://portfolio.lananuranf.my.id/",
+  "image": "https://portfolio.lananuranf.my.id/og-image.png",
+  "jobTitle": "Fullstack Web Developer & DevSecOps Engineer",
+  "description": "Mahasiswa Sistem Informasi semester 6 Universitas Gunadarma. Fullstack developer React + Go Fiber + PostgreSQL + Docker + AWS.",
+  "email": "lananuranf@gmail.com",
+  "telephone": "+6285960235008",
+  "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
+  "sameAs": [
+    "https://github.com/Lananuranf-RockNRoll",
+    "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
+    "https://www.instagram.com/lananur.anf/"
+  ],
+  "knowsAbout": ["React","TypeScript","Go Fiber","Go Gin","PostgreSQL","Docker","AWS EC2","GitHub Actions","DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP","Python","Pandas","Scikit-learn","Streamlit","Machine Learning","Data Science"],
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "Universitas Gunadarma", "url": "https://www.gunadarma.ac.id/" }
+});
+
+const schemaWebsite = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Portfolio Maulana Nur Anfajm — Lananuranf",
+  "url": "https://portfolio.lananuranf.my.id/"
+});
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, Fullstack Web Developer, DevSecOps, Data Science, React Developer, Go Fiber, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions, CI/CD, Sistem Informasi, Universitas Gunadarma, Machine Learning, Python, Streamlit, portfolio developer indonesia, fullstack developer jakarta" />
+    <meta name="author" content="Maulana Nur Anfajm" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageFull} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Portfolio Lananuranf" />
+    <meta property="og:locale" content="id_ID" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageFull} />
+
+    <meta name="theme-color" content="#f0f9ff" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={schemaPerson} />
+    <script type="application/ld+json" set:html={schemaWebsite} />
+    {extraSchema && <script type="application/ld+json" set:html={extraSchema} />}
+  </head>
+  <body class="bg-white text-slate-900 antialiased">
+    <slot />
+  </body>
+</html>

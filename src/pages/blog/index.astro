@@ -1,0 +1,127 @@
+---
+// src/pages/blog/index.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const POSTS = [
+  {
+    slug: "/blog/cara-deploy-react-go-docker-aws/",
+    title: "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions",
+    desc: "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang jalan tiap push ke main.",
+    date: "28 April 2026",
+    readTime: "12 min read",
+    tags: ["Docker","AWS EC2","Go Fiber","GitHub Actions","CI/CD"],
+    published: true,
+  },
+  {
+    slug: "/blog/devsecops-pipeline-github-actions/",
+    title: "Membangun DevSecOps Pipeline di GitHub Actions: GitLeaks, Semgrep, Trivy, OWASP ZAP",
+    desc: "Shift security left dari hari pertama. Panduan step-by-step mengintegrasikan 4 tools keamanan ke GitHub Actions pipeline.",
+    date: "Coming soon",
+    readTime: "15 min read",
+    tags: ["DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP"],
+    published: false,
+  },
+  {
+    slug: "/blog/go-fiber-vs-nodejs-performa/",
+    title: "Go Fiber vs Node.js Express: Benchmark Performa untuk Backend REST API",
+    desc: "Benchmark langsung antara Go Fiber dan Node.js Express — latency, throughput, memory usage, dan kapan harus pilih masing-masing.",
+    date: "Coming soon",
+    readTime: "8 min read",
+    tags: ["Go Fiber","Node.js","Backend","Performance","Benchmark"],
+    published: false,
+  },
+  {
+    slug: "/blog/random-forest-sales-prediction-python/",
+    title: "Prediksi Penjualan dengan Random Forest di Python: End-to-End ML Pipeline",
+    desc: "Step-by-step membangun ML pipeline untuk prediksi penjualan: data cleaning, feature engineering, training Random Forest, evaluasi, dan deploy ke Streamlit.",
+    date: "Coming soon",
+    readTime: "10 min read",
+    tags: ["Python","Scikit-learn","Random Forest","Streamlit","Data Science"],
+    published: false,
+  },
+];
+
+const blogSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "Blog Teknis Lananuranf",
+  "url": "https://portfolio.lananuranf.my.id/blog/",
+  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf" },
+  "blogPost": POSTS.filter(p => p.published).map(p => ({
+    "@type": "BlogPosting",
+    "headline": p.title,
+    "url": `https://portfolio.lananuranf.my.id${p.slug}`,
+    "description": p.desc,
+    "author": { "@type": "Person", "name": "Maulana Nur Anfajm" }
+  }))
+});
+---
+
+<BaseLayout
+  title="Blog Teknis — Maulana Nur Anfajm (Lananuranf) | Tutorial Web Dev, DevSecOps, Data Science"
+  description="Artikel teknis Maulana Nur Anfajm (Lananuranf): tutorial deploy fullstack React + Go Fiber ke AWS EC2, DevSecOps pipeline, machine learning Python, dan web development."
+  canonicalURL="https://portfolio.lananuranf.my.id/blog/"
+  extraSchema={blogSchema}
+>
+  <MainLayout />
+
+  <main class="pt-14 min-h-screen" style="background: linear-gradient(155deg,#f0f9ff 0%,#e0f2fe 20%,#f8fafc 55%,#f0fdf4 80%,#dcfce7 100%);">
+    <div class="max-w-4xl mx-auto px-6 py-16">
+
+      <div class="mb-12">
+        <a href="/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-6">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+          Kembali ke Portfolio
+        </a>
+        <p class="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">Artikel teknis</p>
+        <h1 class="text-4xl font-extrabold text-slate-900">Blog</h1>
+        <p class="text-slate-500 mt-2 text-sm max-w-xl">
+          Sharing pengalaman, tutorial, dan studi kasus nyata dari proyek yang pernah dibangun.
+          Bukan teori — semua based on real implementation.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        {POSTS.map(post => (
+          <article class={`bg-white rounded-3xl border shadow-sm overflow-hidden transition-all duration-200 ${post.published ? "border-slate-200 hover:-translate-y-1 hover:shadow-md" : "border-slate-100 opacity-60"}`}>
+            <div class="p-7 flex flex-col md:flex-row gap-5">
+              <div class="flex-1 flex flex-col gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class={`text-xs font-semibold px-2.5 py-1 rounded-full ${post.published ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-50 text-slate-400 border border-slate-200"}`}>
+                    {post.published ? "Published" : "Coming Soon"}
+                  </span>
+                  <span class="text-xs text-slate-400">{post.date}</span>
+                  <span class="text-xs text-slate-400">· {post.readTime}</span>
+                </div>
+                <h2 class="text-lg font-bold text-slate-900 leading-snug">
+                  {post.published
+                    ? <a href={post.slug} class="hover:text-sky-600 transition-colors">{post.title}</a>
+                    : post.title
+                  }
+                </h2>
+                <p class="text-slate-500 text-sm leading-relaxed">{post.desc}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {post.tags.map(t => (
+                    <span class="text-xs font-medium px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-full text-slate-500">{t}</span>
+                  ))}
+                </div>
+              </div>
+              {post.published && (
+                <div class="flex items-center flex-shrink-0">
+                  <a href={post.slug} class="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors whitespace-nowrap">
+                    Baca →
+                  </a>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

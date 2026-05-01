@@ -1,0 +1,475 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker & GitHub Actions CI/CD";
+const desc  = "Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL, sampai CI/CD pipeline otomatis yang berjalan tiap push ke main branch.";
+const url   = "https://portfolio.lananuranf.my.id/blog/cara-deploy-react-go-docker-aws/";
+const datePublished = "2026-04-28";
+const dateModified  = "2026-04-28";
+
+const articleSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": desc,
+  "url": url,
+  "datePublished": datePublished,
+  "dateModified": dateModified,
+  "inLanguage": "id",
+  "author": { "@type": "Person", "name": "Maulana Nur Anfajm", "alternateName": "Lananuranf", "url": "https://portfolio.lananuranf.my.id/" },
+  "publisher": { "@type": "Person", "name": "Maulana Nur Anfajm" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": url },
+  "keywords": "deploy react go fiber aws ec2 docker github actions ci/cd nginx ssl fullstack indonesia",
+  "articleSection": "Tutorial",
+  "wordCount": "1800"
+});
+
+// Semua code snippet yang punya ${ } di-escape sebagai string lalu di-inject via set:html
+// Ini menghindari Astro parse ${ sebagai template expression
+
+const codeSSH = `chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@YOUR_EC2_IP`;
+
+const codeDocker = `# Update system
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Install dependencies
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+# Add Docker GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+echo "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \\
+https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | \\
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Tambahkan user ubuntu ke group docker
+sudo usermod -aG docker ubuntu
+newgrp docker
+
+# Verifikasi
+docker --version
+docker compose version`;
+
+const codeDockerfileBackend = `# Stage 1: Build binary
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o main ./cmd/main.go
+
+# Stage 2: Image final (minimal)
+FROM alpine:3.19
+RUN apk --no-cache add ca-certificates tzdata
+WORKDIR /root/
+COPY --from=builder /app/main .
+ENV TZ=Asia/Jakarta
+EXPOSE 8080
+CMD ["./main"]`;
+
+const codeDockerfileFrontend = `# Stage 1: Build React app
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve dengan Nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx-frontend.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]`;
+
+const codeNginxFrontend = `server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json;
+
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+
+    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}`;
+
+const codeCompose = `version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: letta_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: \${DB_USER}
+      POSTGRES_PASSWORD: \${DB_PASSWORD}
+      POSTGRES_DB: \${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: letta_backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_USER: \${DB_USER}
+      DB_PASSWORD: \${DB_PASSWORD}
+      DB_NAME: \${DB_NAME}
+      DB_PORT: 5432
+      JWT_SECRET: \${JWT_SECRET}
+      APP_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: letta_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: letta_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge`;
+
+const codeEnv = `DB_USER=letta_user
+DB_PASSWORD=supersecretpassword123
+DB_NAME=letta_school
+JWT_SECRET=your-very-long-random-jwt-secret-here`;
+
+const codeCertbot = `sudo apt-get install -y certbot
+sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com`;
+
+const codeNginxConf = `events { worker_connections 1024; }
+
+http {
+    server {
+        listen 80;
+        server_name yourdomain.com www.yourdomain.com;
+        return 301 https://\$host\$request_uri;
+    }
+
+    server {
+        listen 443 ssl http2;
+        server_name yourdomain.com www.yourdomain.com;
+
+        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "strict-origin-when-cross-origin";
+
+        location / {
+            proxy_pass http://frontend:80;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+        }
+
+        location /api/ {
+            proxy_pass http://backend:8080/;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        }
+    }
+}`;
+
+const codeGHActions = `name: Deploy to AWS EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: GitLeaks — Secret Scanning
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+
+      - name: Semgrep — SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: "auto"
+
+      - name: Trivy — Container Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: \${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: \${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/letta-school
+            git pull origin main
+            docker compose up --build -d
+            docker image prune -f`;
+
+const codeFirstDeploy = `cd /home/ubuntu
+git clone https://github.com/username/letta-school.git
+cd letta-school
+
+# Buat .env
+nano .env
+
+# Jalankan semua container
+docker compose up --build -d
+
+# Cek status
+docker compose ps
+docker compose logs -f backend`;
+
+const codeCron = `0 0 1 * * certbot renew --quiet && docker compose restart nginx`;
+---
+
+<BaseLayout title={title} description={desc} canonicalURL={url} extraSchema={articleSchema}>
+  <MainLayout />
+
+  <main class="pt-14" style="background-color:#f8fafc;">
+    <article class="max-w-3xl mx-auto px-6 py-14" itemscope itemtype="https://schema.org/BlogPosting">
+      <meta itemprop="datePublished" content={datePublished} />
+      <meta itemprop="dateModified" content={dateModified} />
+
+      <a href="/blog/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-8">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        Kembali ke Blog
+      </a>
+
+      <header class="mb-10">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">Tutorial</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">DevOps</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Go Fiber</span>
+          <time datetime={datePublished} class="text-xs text-slate-400">28 April 2026</time>
+          <span class="text-xs text-slate-400">· 12 min read</span>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4" itemprop="headline">
+          Cara Deploy Fullstack App React + Go Fiber ke AWS EC2 dengan Docker &amp; GitHub Actions CI/CD
+        </h1>
+        <p class="text-slate-500 text-base leading-relaxed" itemprop="description">
+          Panduan lengkap dari nol: setup EC2, Docker Compose, Nginx reverse proxy, SSL,
+          sampai CI/CD pipeline otomatis yang berjalan tiap push ke main branch.
+          Semua berdasarkan pengalaman langsung deploy proyek
+          <a href="https://school.lananuranf.my.id/" class="text-sky-600 hover:underline">Letta School</a>.
+        </p>
+
+        <div class="flex items-center gap-3 mt-5 pt-5 border-t border-slate-200">
+          <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white text-sm font-bold">L</div>
+          <div>
+            <p class="text-sm font-semibold text-slate-800" itemprop="author" itemscope itemtype="https://schema.org/Person">
+              <span itemprop="name">Maulana Nur Anfajm</span>
+              <span class="text-slate-400 font-normal"> (Lananuranf)</span>
+            </p>
+            <p class="text-xs text-slate-400">Fullstack Developer · Mahasiswa Universitas Gunadarma</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="flex flex-wrap gap-2 mb-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+        <span class="text-xs font-semibold text-slate-500 w-full mb-1">Stack yang digunakan:</span>
+        {["React","Go Fiber","PostgreSQL","Docker","Docker Compose","AWS EC2","GitHub Actions","Nginx","SSL/HTTPS"].map(t => (
+          <span class="text-xs font-medium px-2.5 py-1 bg-white border border-slate-200 rounded-full text-slate-600">{t}</span>
+        ))}
+      </div>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm" itemprop="articleBody">
+
+        <h2>Pendahuluan</h2>
+        <p>Salah satu skill yang paling berguna tapi jarang diajarkan di kampus adalah bagaimana cara deploy aplikasi ke internet secara benar — bukan cuma "bisa diakses", tapi production-grade: aman, otomatis, dan mudah dimaintain.</p>
+        <p>Artikel ini adalah panduan lengkap yang saya tulis berdasarkan pengalaman langsung men-deploy <strong>Letta School</strong>, sebuah fullstack school management system dengan React di frontend dan Go Fiber di backend.</p>
+
+        <div class="not-prose bg-amber-50 border border-amber-200 rounded-2xl p-5 my-6">
+          <p class="text-sm font-semibold text-amber-800 mb-2">⚡ Yang akan kamu pelajari:</p>
+          <ul class="text-sm text-amber-700 list-disc list-inside space-y-1">
+            <li>Setup AWS EC2 instance (Ubuntu) dari nol</li>
+            <li>Dockerize React app dan Go Fiber app</li>
+            <li>Orchestrate multi-container dengan Docker Compose</li>
+            <li>Konfigurasi Nginx reverse proxy + SSL dengan Let's Encrypt</li>
+            <li>Build GitHub Actions CI/CD pipeline yang fully automated</li>
+            <li>Tips production: health check, restart policy, environment variables</li>
+          </ul>
+        </div>
+
+        <h2>Prasyarat</h2>
+        <ul>
+          <li>Akun AWS (bisa pakai free tier untuk EC2 t2.micro)</li>
+          <li>Domain yang sudah diarahkan ke IP EC2 (untuk SSL)</li>
+          <li>Pemahaman dasar Docker dan Linux command line</li>
+          <li>Repository GitHub dengan kode React + Go Fiber</li>
+        </ul>
+
+        <h2>Step 1: Setup AWS EC2 Instance</h2>
+        <p>Login ke AWS Console → EC2 → <strong>"Launch Instance"</strong>. Pilih <strong>Ubuntu Server 22.04 LTS</strong>. Instance type <code>t2.micro</code> cukup untuk project kecil-menengah (masuk free tier).</p>
+        <p><strong>Security Group</strong> — buka port berikut:</p>
+        <ul>
+          <li><code>22</code> (SSH) — restrict ke IP kamu saja</li>
+          <li><code>80</code> (HTTP) — dari mana saja</li>
+          <li><code>443</code> (HTTPS) — dari mana saja</li>
+        </ul>
+        <p>Download file <code>.pem</code>, simpan aman, lalu koneksi SSH:</p>
+      </div>
+
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeSSH} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 2: Install Docker di EC2</h2>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDocker} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 3: Dockerize Go Fiber Backend</h2>
+        <p>Pakai <strong>multi-stage build</strong> untuk meminimalkan ukuran image — dari ~300MB jadi hanya ~15MB:</p>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileBackend} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 4: Dockerize React Frontend</h2>
+        <p>React di-build jadi static files, lalu di-serve Nginx. Jauh lebih efisien dari <code>npm start</code> di production:</p>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeDockerfileFrontend} /></pre>
+      <p class="text-slate-600 text-sm my-3">Konfigurasi Nginx untuk handle React Router (SPA fallback):</p>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxFrontend} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 5: Docker Compose</h2>
+        <p>Orchestrate semua service (db, backend, frontend, nginx) dalam satu file:</p>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCompose} /></pre>
+      <p class="text-slate-600 text-sm my-3">Buat file <code>.env</code> di server (jangan di-commit ke Git!):</p>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeEnv} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 6: Nginx Reverse Proxy + SSL</h2>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCertbot} /></pre>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeNginxConf} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Step 7: GitHub Actions CI/CD Pipeline</h2>
+        <p>Buat <code>.github/workflows/deploy.yml</code>. Setiap push ke <code>main</code> → security scan → deploy otomatis:</p>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeGHActions} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <p>Tambahkan secrets di GitHub → Settings → Secrets: <code>EC2_HOST</code> dan <code>EC2_SSH_KEY</code>.</p>
+        <h2>Step 8: First Deployment</h2>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeFirstDeploy} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <h2>Tips Production</h2>
+        <ul>
+          <li><strong>Auto-renew SSL:</strong> Setup cron job:</li>
+        </ul>
+      </div>
+      <pre class="bg-slate-900 text-slate-100 rounded-2xl p-5 overflow-x-auto text-sm my-4"><code set:html={codeCron} /></pre>
+
+      <div class="prose prose-slate max-w-none prose-headings:font-extrabold prose-headings:text-slate-900 prose-a:text-sky-600 prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm">
+        <ul>
+          <li><strong>Database backup:</strong> Setup cronjob backup PostgreSQL ke S3 secara rutin.</li>
+          <li><strong>Jangan commit .env:</strong> Tambahkan <code>.env</code> ke <code>.gitignore</code>.</li>
+          <li><strong>Resource limit:</strong> Tambahkan memory dan CPU limits di docker-compose.yml.</li>
+        </ul>
+
+        <h2>Hasil Akhir</h2>
+        <p>Workflow deployment kamu jadi: push ke <code>main</code> → GitHub Actions scan security → SSH ke EC2 → <code>docker compose up --build -d</code> → aplikasi live dalam 2-3 menit tanpa manual intervention. Ini persis workflow yang dipakai untuk deploy <a href="https://school.lananuranf.my.id/">Letta School</a>.</p>
+
+        <div class="not-prose bg-slate-50 border border-slate-200 rounded-2xl p-6 mt-8">
+          <p class="font-semibold text-slate-800 mb-1">Tentang penulis</p>
+          <p class="text-sm text-slate-600">
+            <strong>Maulana Nur Anfajm</strong> (Lananuranf) — mahasiswa Sistem Informasi Universitas Gunadarma semester 6. Fullstack developer spesialis React, Go Fiber, Docker, AWS, dan DevSecOps.
+            <a href="/" class="text-sky-600 hover:underline">Lihat portfolio lengkap →</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-10 pt-8 border-t border-slate-200">
+        {["Docker","AWS EC2","Go Fiber","React","GitHub Actions","CI/CD","Nginx","SSL","DevOps","Tutorial"].map(t => (
+          <span class="text-xs font-medium px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full">{t}</span>
+        ))}
+      </div>
+
+      <div class="mt-10 p-6 bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 rounded-3xl text-center">
+        <p class="font-bold text-slate-900 mb-1">Ada pertanyaan atau feedback?</p>
+        <p class="text-sm text-slate-500 mb-4">Hubungi gua langsung — happy to discuss!</p>
+        <div class="flex justify-center gap-3 flex-wrap">
+          <a href="mailto:lananuranf@gmail.com" class="px-5 py-2.5 bg-sky-500 text-white font-semibold rounded-xl text-sm hover:bg-sky-600 transition-colors">Email Gua</a>
+          <a href="https://github.com/Lananuranf-RockNRoll" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors">GitHub</a>
+          <a href="/" class="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-50 transition-colors">Lihat Portfolio</a>
+        </div>
+      </div>
+
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
