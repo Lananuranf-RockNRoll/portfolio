@@ -24,20 +24,25 @@ const schemaPerson = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Maulana Nur Anfajm",
-  "alternateName": ["Lananuranf", "lananur.anf"],
+  "alternateName": ["Lananuranf", "lananur.anf", "Maulana Anfajm"],
   "url": "https://portfolio.lananuranf.my.id/",
   "image": "https://portfolio.lananuranf.my.id/og-image.png",
   "jobTitle": "Fullstack Web Developer & DevSecOps Engineer",
-  "description": "Mahasiswa Sistem Informasi semester 6 Universitas Gunadarma. Fullstack developer React + Go Fiber + PostgreSQL + Docker + AWS.",
+  "description": "Mahasiswa Sistem Informasi semester 6 Universitas Gunadarma Jakarta. Fullstack developer spesialis React, Go Fiber, PostgreSQL, Docker, AWS EC2, Data Science, dan Machine Learning.",
   "email": "lananuranf@gmail.com",
   "telephone": "+6285960235008",
   "address": { "@type": "PostalAddress", "addressLocality": "Jakarta", "addressCountry": "ID" },
   "sameAs": [
-    "https://github.com/Lananuranf-RockNRoll",
+    "https://github.com/Lananuranf",
     "https://www.linkedin.com/in/maulana-nur-anfajm-759a633b4/",
     "https://www.instagram.com/lananur.anf/"
   ],
-  "knowsAbout": ["React","TypeScript","Go Fiber","Go Gin","PostgreSQL","Docker","AWS EC2","GitHub Actions","DevSecOps","GitLeaks","Semgrep","Trivy","OWASP ZAP","Python","Pandas","Scikit-learn","Streamlit","Machine Learning","Data Science"],
+  "knowsAbout": [
+    "React","TypeScript","Go Fiber","Go Gin","PostgreSQL","Docker","Docker Compose",
+    "AWS EC2","GitHub Actions","CI/CD","DevSecOps","GitLeaks","Semgrep","Trivy",
+    "OWASP ZAP","Python","Pandas","Scikit-learn","Streamlit","Machine Learning",
+    "Data Science","Nginx","Kubernetes","SvelteKit","Node.js","MongoDB","MySQL"
+  ],
   "alumniOf": { "@type": "CollegeOrUniversity", "name": "Universitas Gunadarma", "url": "https://www.gunadarma.ac.id/" }
 });
 
@@ -45,7 +50,36 @@ const schemaWebsite = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Portfolio Maulana Nur Anfajm — Lananuranf",
-  "url": "https://portfolio.lananuranf.my.id/"
+  "alternateName": ["Lananuranf Portfolio","Portfolio Lananuranf","Maulana Nur Anfajm Portfolio"],
+  "url": "https://portfolio.lananuranf.my.id/",
+  "description": "Portfolio resmi Maulana Nur Anfajm (Lananuranf) — fullstack developer, DevSecOps engineer, dan data scientist dari Jakarta."
+});
+
+const schemaFAQ = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Siapa Lananuranf?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Lananuranf adalah nama online dari Maulana Nur Anfajm, mahasiswa Sistem Informasi Universitas Gunadarma semester 6 yang aktif sebagai fullstack web developer, DevSecOps engineer, dan data scientist di Jakarta." }
+    },
+    {
+      "@type": "Question",
+      "name": "Apa saja proyek Lananuranf?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Proyek utama Lananuranf meliputi: Web Management Letta School (React + Go Fiber + AWS EC2 + DevSecOps), Sales Data Dashboard (Python + Random Forest + Streamlit), Dockerized E-Commerce App (Go Gin + Docker + AWS EC2), dan AI Agent Telegram Personal Assistant (Groq LLaMA 3.3 + Whisper V3)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Apa tech stack yang digunakan Maulana Nur Anfajm?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Tech stack utama: React, TypeScript, Go Fiber, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions CI/CD, Python, Pandas, Scikit-learn, Streamlit, GitLeaks, Semgrep, Trivy, OWASP ZAP." }
+    },
+    {
+      "@type": "Question",
+      "name": "Apakah Lananuranf open for work?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Ya, Maulana Nur Anfajm (Lananuranf) terbuka untuk internship, freelance, dan full-time. Hubungi via email lananuranf@gmail.com atau WhatsApp +62 859-6023-5008." }
+    }
+  ]
 });
 ---
 
@@ -58,11 +92,16 @@ const schemaWebsite = JSON.stringify({
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, Fullstack Web Developer, DevSecOps, Data Science, React Developer, Go Fiber, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions, CI/CD, Sistem Informasi, Universitas Gunadarma, Machine Learning, Python, Streamlit, portfolio developer indonesia, fullstack developer jakarta" />
-    <meta name="author" content="Maulana Nur Anfajm" />
+    <meta name="keywords" content="Maulana Nur Anfajm, Lananuranf, portofolio lananuranf, portfolio lananuranf, project lananuranf, blog lananuranf, maulana nur anfajm portfolio, maulana anfajm developer, lananuranf github, Fullstack Web Developer, DevSecOps Engineer, Data Science, React Developer, Go Fiber Backend, Go Gin, PostgreSQL, Docker, AWS EC2, GitHub Actions, CI/CD Pipeline, Sistem Informasi, Universitas Gunadarma, Machine Learning, Python, Streamlit, Telegram Bot AI, fullstack developer jakarta, web developer indonesia, portfolio developer indonesia" />
+    <meta name="author" content="Maulana Nur Anfajm (Lananuranf)" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={canonicalURL} />
 
+    <!-- Geo -->
+    <meta name="geo.region" content="ID-JK" />
+    <meta name="geo.placename" content="Jakarta, Indonesia" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
@@ -70,23 +109,32 @@ const schemaWebsite = JSON.stringify({
     <meta property="og:image" content={ogImageFull} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf) — Fullstack Web Developer Jakarta" />
     <meta property="og:site_name" content="Portfolio Lananuranf" />
     <meta property="og:locale" content="id_ID" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageFull} />
+    <meta name="twitter:image:alt" content="Portfolio Maulana Nur Anfajm (Lananuranf)" />
 
+    <!-- PWA -->
     <meta name="theme-color" content="#f0f9ff" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <!-- Schema.org -->
     <script type="application/ld+json" set:html={schemaPerson} />
     <script type="application/ld+json" set:html={schemaWebsite} />
+    <script type="application/ld+json" set:html={schemaFAQ} />
     {extraSchema && <script type="application/ld+json" set:html={extraSchema} />}
   </head>
   <body class="bg-white text-slate-900 antialiased">
